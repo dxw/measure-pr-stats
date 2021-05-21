@@ -22,4 +22,10 @@ repo_path = "tmp/repos/#{repo_name}"
 `git clone "https://github.com/#{repo_name}" #{repo_path}`
 Dir.chdir(repo_path)
 
-puts `git show --format="" --shortstat #{commit_hash}`
+stats = `git show --format="" --shortstat #{commit_hash}`
+
+files_changed = /(\d)+ files changed/.match(stats).captures[0]
+insertions = /(\d)+ insertions/.match(stats).captures[0]
+deletions = /(\d)+ deletions/.match(stats).captures[0]
+
+puts [files_changed, insertions, deletions].join(", ")
