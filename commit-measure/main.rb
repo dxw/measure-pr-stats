@@ -11,21 +11,34 @@
 #   - created
 #   - deleted
 #   - renamed
+# - number of merge commits
+
+def clone(repo_name)
+  repo_path = "tmp/repos/#{repo_name}"
+
+  `rm -r -f tmp`
+
+  `git clone "https://github.com/#{repo_name}" #{repo_path}`
+
+  repo_path
+end
+
+def count_changes(repo_path, commit_hash)
+  stats = `cd #{repo_path} && git show --format="" --shortstat #{commit_hash}`
+
+  files_changed = /(\d)+ files changed/.match(stats).captures[0]
+  insertions = /(\d)+ insertions/.match(stats).captures[0]
+  deletions = /(\d)+ deletions/.match(stats).captures[0]
+
+  {
+    files_changed: files_changed,
+    insertions: insertions,
+    deletions: deletions
+  }
+end
 
 repo_name = ARGV[0]
 commit_hash = ARGV[1]
 
-repo_path = "tmp/repos/#{repo_name}"
-
-`rm -r -f tmp`
-
-`git clone "https://github.com/#{repo_name}" #{repo_path}`
-Dir.chdir(repo_path)
-
-stats = `git show --format="" --shortstat #{commit_hash}`
-
-files_changed = /(\d)+ files changed/.match(stats).captures[0]
-insertions = /(\d)+ insertions/.match(stats).captures[0]
-deletions = /(\d)+ deletions/.match(stats).captures[0]
-
-puts [files_changed, insertions, deletions].join(", ")
+repo_path = clone(repo_name)
+p count_changes(repo_path, commit_hash)
