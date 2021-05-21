@@ -1,14 +1,21 @@
 require 'octokit'
 require 'optparse'
+require 'optparse/time'
 require 'date'
 require './commit-measure/main.rb'
-
-#repo_name = "dxw/project-wisdom"
 
 options = {}
 OptionParser.new do |opts|
   opts.on("-r", "--repository URL") do |arg|
     options[:repository] = arg
+  end
+
+  opts.on("--start", "--start-date DATE", Time) do |arg|
+    options[:start_date] = arg
+  end
+
+  opts.on("--end", "--end-date DATE", Time) do |arg|
+    options[:end_date] = arg
   end
 
   opts.on("--state STATE") do |arg|
@@ -31,7 +38,10 @@ pull_requests = client.pull_requests(options[:repository], state: options[:state
 # Reject drafts
 pull_requests = pull_requests.reject(&:draft) unless options[:drafts]
 
-#
+# Limit to date range
+pull_requests = pull_requests.select { |pr| options[:start_date] <= pr.created_at } if options[:start_date]
+pull_requests = pull_requests.select { |pr| options[:end_date] >= pr.created_at } if options[:end_date]
+
 output = {}
 
 repo_path = clone(options[:repository])
