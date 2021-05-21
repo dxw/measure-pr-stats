@@ -1,7 +1,7 @@
 require 'octokit'
 require 'optparse'
-require 'optparse/date'
 require 'date'
+require './commit-measure/main.rb'
 
 #repo_name = "dxw/project-wisdom"
 
@@ -11,14 +11,6 @@ OptionParser.new do |opts|
     options[:repository] = arg
   end
 
-  opts.on("--start", "--start-date DATE", DateTime) do |arg|
-    options[:start_date] = arg
-  end
-
-  opts.on("--end", "--end-date DATE", DateTime) do |arg|
-    options[:end_date] = arg
-  end
-
   opts.on("--state STATE") do |arg|
     options[:state] = arg || 'open'
   end
@@ -26,29 +18,34 @@ OptionParser.new do |opts|
   opts.on("--drafts DRAFTS", FalseClass) do |arg|
     options[:drafts] = arg
   end
-  
+
   opts.on("--bots BOTS", FalseClass) do |arg|
     options[:bots] = arg
   end
 end.parse!
 
-client = Octokit::Client.new(access_token: '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')
+client = Octokit::Client.new()
 
 pull_requests = client.pull_requests(options[:repository], state: options[:state])
 
 # Reject drafts
 pull_requests = pull_requests.reject(&:draft) unless options[:drafts]
 
-# 
+#
 output = {}
+
+repo_path = clone(options[:repository])
 
 pull_requests.map(&:number).each do |prn|
   commits = client.pull_request_commits(options[:repository], prn)
 
   commits = commits.select { |c| c.author.type == 'User' } unless options[:bots]
 
-  output[prn] = commits.map(&:sha) unless commits.empty?
-  # do something with commits
+  commit_hashes = commits.map(&:sha)
+
+  pr = PullRequest.new(repo_path, commit_hashes)
+
+  output[prn] = pr.stats
 end
 
 puts output
