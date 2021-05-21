@@ -55,7 +55,7 @@ pull_requests.map(&:number).each do |prn|
 
   pr = PullRequest.new(repo_path, commit_hashes)
 
-  output[prn] = pr.stats
+  output[prn] = pr.stats.values.join(",")
 end
 
-puts output
+puts output.values.join("\n")
