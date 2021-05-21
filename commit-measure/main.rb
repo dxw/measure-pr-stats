@@ -37,18 +37,33 @@ def count_changes(repo_path, commit_hash)
   }
 end
 
+def sum_all_changes(repo_path, commit_hashes)
+  commit_hashes.map { |commit_hash|
+    count_changes(repo_path, commit_hash)
+  }.reduce { |acc, result|
+    {
+      files_changed: acc[:files_changed] + result[:files_changed],
+      insertions: acc[:insertions] + result[:insertions],
+      deletions: acc[:deletions] + result[:deletions]
+    }
+  }
+end
+
+def calculate_change_statistics(repo_path, commit_hashes)
+  changes = sum_all_changes(repo_path, commit_hashes)
+
+  total = changes[:insertions] + changes[:deletions]
+
+  {
+    total: total,
+    changes_per_commit: total / commit_hashes.length
+  }
+end
+
 repo_name = ARGV[0]
 
 repo_path = clone(repo_name)
 
 commit_hashes = [ARGV[1], ARGV[1], ARGV[1]]
 
-p commit_hashes.map { |commit_hash|
-  count_changes(repo_path, commit_hash)
-}.reduce { |acc, result|
-  {
-    files_changed: acc[:files_changed] + result[:files_changed],
-    insertions: acc[:insertions] + result[:insertions],
-    deletions: acc[:deletions] + result[:deletions]
-  }
-}
+p calculate_change_statistics(repo_path, commit_hashes)
