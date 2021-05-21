@@ -26,9 +26,9 @@ end
 def count_changes(repo_path, commit_hash)
   stats = `cd #{repo_path} && git show --format="" --shortstat #{commit_hash}`
 
-  files_changed = /(\d)+ files changed/.match(stats).captures[0]
-  insertions = /(\d)+ insertions/.match(stats).captures[0]
-  deletions = /(\d)+ deletions/.match(stats).captures[0]
+  files_changed = /(\d)+ files changed/.match(stats)&.captures[0].to_i || 0
+  insertions = /(\d)+ insertions/.match(stats)&.captures[0].to_i || 0
+  deletions = /(\d)+ deletions/.match(stats)&.captures[0].to_i || 0
 
   {
     files_changed: files_changed,
@@ -38,7 +38,17 @@ def count_changes(repo_path, commit_hash)
 end
 
 repo_name = ARGV[0]
-commit_hash = ARGV[1]
 
 repo_path = clone(repo_name)
-p count_changes(repo_path, commit_hash)
+
+commit_hashes = [ARGV[1], ARGV[1], ARGV[1]]
+
+p commit_hashes.map { |commit_hash|
+  count_changes(repo_path, commit_hash)
+}.reduce { |acc, result|
+  {
+    files_changed: acc[:files_changed] + result[:files_changed],
+    insertions: acc[:insertions] + result[:insertions],
+    deletions: acc[:deletions] + result[:deletions]
+  }
+}
