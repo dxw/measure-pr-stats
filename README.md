@@ -16,15 +16,15 @@ We use [Octokit](https://github.com/octokit/octokit.rb) to access the GitHub API
 
 `ruby get-pr-commits.rb -r dxw/your-repo`
 
-| Option                        | Description           | Options                           | Default   |
-| ----------------------------- | --------------------- | ----------------------------------|-----------|
-| `-r` or `--repo`              | Repository            | GitHub URL or 'user/repo'         |           |
-| `--start` or `--start-date`   | Start date            | `2021-09-24`                      |           |
-| `--end` or `--end-date`       | End date              | `2021-09-24`                      |           |
-| `--state`                     | PR state              | 'open' or 'closed'                | 'open'    |
-| `--draft`                     | Include draft PRs?    | `true` or `false`                 | `false`   |
-| `--bots`                      | Include bots?         | `true` or `false`                 | `false`   |
-| `--token`                     | GitHub access token   |                                   |           |
+| Option                        | Description                           | Options                           | Default   |
+| ----------------------------- | ------------------------------------- | ----------------------------------|-----------|
+| `-r` or `--repository`        | Repository                            | GitHub URL or 'user/repo'         |           |
+| `--start` or `--start-date`   | Cutoff for date of PR creation (<=)   | `2021-09-24`                      |           |
+| `--end` or `--end-date`       | Cutoff for date of PR creation (>=)   | `2021-09-24`                      |           |
+| `--state`                     | PR state                              | 'open' or 'closed'                | 'closed'  |
+| `--draft`                     | Include draft PRs?                    | `true` or `false`                 | `false`   |
+| `--bots`                      | Include bots?                         | `true` or `false`                 | `false`   |
+| `--token`                     | GitHub access token                   |                                   |           |
 
 You can provide a GitHub access token through the option flag listed above, or by specifing it in `.env`.
 
