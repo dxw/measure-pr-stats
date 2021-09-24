@@ -6,27 +6,27 @@ require './commit-measure/main.rb'
 
 options = {}
 OptionParser.new do |opts|
-  opts.on("-r", "--repository URL") do |arg|
+  opts.on('-r', '--repository URL') do |arg|
     options[:repository] = arg
   end
 
-  opts.on("--start", "--start-date DATE", Time) do |arg|
+  opts.on('--start', '--start-date DATE', Time) do |arg|
     options[:start_date] = arg
   end
 
-  opts.on("--end", "--end-date DATE", Time) do |arg|
+  opts.on('--end', '--end-date DATE', Time) do |arg|
     options[:end_date] = arg
   end
 
-  opts.on("--state STATE") do |arg|
+  opts.on('--state STATE') do |arg|
     options[:state] = arg || 'open'
   end
 
-  opts.on("--drafts DRAFTS", FalseClass) do |arg|
+  opts.on('--drafts DRAFTS', FalseClass) do |arg|
     options[:drafts] = arg
   end
 
-  opts.on("--bots BOTS", FalseClass) do |arg|
+  opts.on('--bots BOTS', FalseClass) do |arg|
     options[:bots] = arg
   end
 end.parse!
