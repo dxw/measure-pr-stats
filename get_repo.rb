@@ -1,5 +1,5 @@
 require './commit-measure/main.rb'
-:repository = 'UKGovernmentBEIS/beis-report-official-development-assistance'
+repository = 'UKGovernmentBEIS/beis-report-official-development-assistance'
 repo_path = clone(options[:repository])
 
 pull_requests.each do |pr|
@@ -19,3 +19,4 @@ end
 #end
 #
 #puts output.values.join("\n")
+Octokit.compare("UKGovernmentBEIS/beis-report-official-development-assistance", "902af67", "3d7df180").commits.map(&:sha)
