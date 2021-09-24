@@ -7,7 +7,7 @@ require './commit-measure/main.rb'
 options = {}
 OptionParser.new do |opts|
   opts.on('-r', '--repository URL') do |arg|
-    options[:repository] = arg
+    options[:repository] = arg.gsub('https://github.com/', '')
   end
 
   opts.on('--start', '--start-date DATE', Time) do |arg|
