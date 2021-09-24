@@ -3,6 +3,8 @@ require 'optparse'
 require 'optparse/time'
 require 'date'
 require './commit-measure/main.rb'
+require 'dotenv'
+Dotenv.load
 
 options = {}
 OptionParser.new do |opts|
@@ -29,11 +31,16 @@ OptionParser.new do |opts|
   opts.on('--bots BOTS', FalseClass) do |arg|
     options[:bots] = arg
   end
+
+  opts.on('--token TOKEN') do |arg|
+    options[:token] = arg
+  end
 end.parse!
 
-client = Octokit::Client.new()
+client = Octokit::Client.new(access_token: options[:token])
 options = {
   state: 'closed',
+  token: ENV.fetch('GITHUB_TOKEN', nil)
 }.merge(options)
 
 pull_requests = client.pull_requests(options[:repository], state: options[:state])
