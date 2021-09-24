@@ -19,7 +19,7 @@ OptionParser.new do |opts|
   end
 
   opts.on('--state STATE') do |arg|
-    options[:state] = arg || 'open'
+    options[:state] = arg
   end
 
   opts.on('--drafts DRAFTS', FalseClass) do |arg|
@@ -32,6 +32,9 @@ OptionParser.new do |opts|
 end.parse!
 
 client = Octokit::Client.new()
+options = {
+  state: 'closed',
+}.merge(options)
 
 pull_requests = client.pull_requests(options[:repository], state: options[:state])
 
